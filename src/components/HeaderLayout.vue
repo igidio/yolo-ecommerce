@@ -137,3 +137,4 @@ const cartItemCount = ref(3)
 const showUserMenu = ref(false)
 const mobileMenuOpen = ref(false)
 </script>
+
