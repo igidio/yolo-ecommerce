@@ -2,9 +2,10 @@
   <header class="bg-background border-b border-border">
     <div class="container mx-auto px-4">
       <div class="flex items-center justify-between h-16">
-        <!-- Logo -->
+
+      <!-- Logo -->
         <div class="flex-shrink-0">
-          <a href="/" class="text-2xl font-bold text-primary">ShopNow</a>
+          <a href="/" class="text-2xl font-bold text-primary">YOLOv11</a>
         </div>
 
         <!-- Navigation -->
@@ -27,14 +28,25 @@
               placeholder="Search products..."
               class="w-full py-2 pl-10 pr-4 text-sm text-foreground bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             />
-            <div class="absolute inset-y-0 left-0 flex items-center pl-3">+
-              <Icon icon="mdi:search" />
+            <div class="absolute inset-y-0 left-0 flex items-center pl-3">
+              <Icon icon="mdi:search" width="24"/>
             </div>
           </div>
         </div>
 
         <!-- User Account and Cart -->
-        <div class="flex items-center space-x-4">
+        <div class="flex space-x-4">
+          <a
+            href="/cart"
+            class="text-muted-foreground hover:text-primary transition-colors relative"
+          >
+            <Icon icon="mdi:shopping-cart-outline" height="24" />
+            <span
+              class="absolute -top-2 -right-4 bg-primary text-primary-foreground text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
+            >
+              {{ cartItemCount }}
+            </span>
+          </a>
           <div
             class="relative"
             @mouseenter="showUserMenu = true"
@@ -43,7 +55,7 @@
             <button
               class="text-muted-foreground hover:text-primary transition-colors"
             >
-              <!--              <UserIcon class="w-6 h-6" />-->
+              <Icon icon="mdi:user-outline" height="24" />
             </button>
             <div
               v-if="showUserMenu"
@@ -52,31 +64,21 @@
               <a
                 href="/account"
                 class="block px-4 py-2 text-sm text-foreground hover:bg-accent"
-              >My Account</a
+              >Mi cuenta</a
               >
               <a
-                href="/orders"
+                href="/"
                 class="block px-4 py-2 text-sm text-foreground hover:bg-accent"
-              >Orders</a
+              >Lista de deseos</a
               >
               <a
-                href="/logout"
+                href="/"
                 class="block px-4 py-2 text-sm text-foreground hover:bg-accent"
-              >Logout</a
+              >Cerrar sesión</a
               >
             </div>
           </div>
-          <a
-            href="/cart"
-            class="text-muted-foreground hover:text-primary transition-colors relative"
-          >
-            <!--            <ShoppingCartIcon class="w-6 h-6" />-->
-            <span
-              class="absolute -top-2 -right-2 bg-primary text-primary-foreground text-xs font-bold rounded-full w-5 h-5 flex items-center justify-center"
-            >
-              {{ cartItemCount }}
-            </span>
-          </a>
+
         </div>
 
         <!-- Mobile menu button -->
@@ -85,8 +87,8 @@
             @click="mobileMenuOpen = !mobileMenuOpen"
             class="text-muted-foreground hover:text-primary transition-colors"
           >
-            <!--            <MenuIcon v-if="!mobileMenuOpen" class="w-6 h-6" />-->
-            <!--            <XIcon v-else class="w-6 h-6" />-->
+            <Icon icon="mdi:menu" />
+            <Icon icon="mdi:times" />
           </button>
         </div>
       </div>
@@ -112,7 +114,7 @@
             class="w-full py-2 pl-10 pr-4 text-sm text-foreground bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
           />
           <div class="absolute inset-y-0 left-0 flex items-center pl-3">
-            <!--            <SearchIcon class="w-5 h-5 text-muted-foreground" />-->
+            <Icon icon="mdi:search" />
           </div>
         </div>
       </div>
@@ -125,10 +127,10 @@ import { ref } from 'vue'
 import { Icon } from '@iconify/vue'
 
 const navItems = [
-  { label: 'Home', href: '/' },
-  { label: 'Categories', href: '/categories' },
-  { label: 'New Arrivals', href: '/new-arrivals' },
-  { label: 'Sale', href: '/sale' }
+  { label: 'Inicio', href: '/' },
+  { label: 'Categorías', href: '/' },
+  { label: 'Novedades', href: '/' },
+  { label: 'Ofertas', href: '/' }
 ]
 
 const cartItemCount = ref(3)
