@@ -138,6 +138,7 @@ const handleImageUpload = (event: Event) => {
     reader.onload = (e: ProgressEvent<FileReader>) => {
       if (e.target && e.target.result) {
         form.value.images.push(e.target.result as string)
+        console.log(form.value.images)
       }
     }
     reader.readAsDataURL(file)
