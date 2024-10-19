@@ -108,13 +108,6 @@
 
       <div v-if="form.tags.length > 0">
         <label for="tags" class="block tags text-sm font-medium text-foreground mb-1">Etiquetas</label>
-        <div class="flex flex-wrap gap-2">
-              <span v-for="(tag, index) in form.tags" :key="index"
-                    class="bg-accent text-foreground px-2 py-1 rounded-full text-xs flex items-center">
-                {{ tag.name }} <span class="ml-1 text-muted-foreground">({{ tag.conf }})</span>
-              </span>
-        </div>
-
         <TagButton v-model="form.tags"/>
 
       </div>
@@ -187,6 +180,7 @@ const handleImageUpload = async (event: Event) => {
     reader.readAsDataURL(file)
 
     form.value.imagesData.push(...files)
+    form.value.imagesData = removeDuplicateFiles(form.value.imagesData)
     await sendImages()
   }
 }
@@ -222,6 +216,9 @@ const sendImages = async () => {
     await formData.append('file', image)
   }
 
+  console.log(form.value.imagesData)
+  console.log(form.value.images)
+
   imageLoading.value = true
   await axios.post('/api/classify', formData, {
     headers: {
@@ -239,4 +236,13 @@ const sendImages = async () => {
       imageLoading.value = false
     })
 }
+
+const removeDuplicateFiles = (files: File[]): File[] => {
+  return files.filter((file, index, self) =>
+      index === self.findIndex((f) => (
+        f.name === file.name && f.size === file.size && f.type === file.type && f.lastModified === file.lastModified
+      ))
+  );
+}
+
 </script>
