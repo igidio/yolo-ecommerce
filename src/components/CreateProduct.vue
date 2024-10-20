@@ -7,7 +7,7 @@
         <label for="productName" class="block text-sm font-medium text-foreground mb-1">Nombre</label>
         <input
           id="productName"
-          v-model="form.productName"
+          v-model="form.name"
           type="text"
           required
           class="w-full px-3 py-2 bg-background border border-input rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
@@ -50,11 +50,10 @@
           required
           class="w-full px-3 py-2 bg-background border border-input rounded-md text-foreground focus:outline-none focus:ring-2 focus:ring-primary"
         >
-          <option value="">Selecciona una categoría</option>
-          <option value="electronics">Productos electrónicos</option>
-          <option value="clothing">Ropa</option>
-          <option value="books">Libros</option>
-          <option value="home">Hogar</option>
+          <option
+            v-for="(category, index) in categories" :key="index"
+            :value="category"
+          >{{ category }}</option>
         </select>
       </div>
 
@@ -65,7 +64,7 @@
         <div class="flex flex-col justify-center relative">
 
           <div class="absolute z-[1] bg-white/80 w-full h-full flex items-center justify-center" v-if="imageLoading">
-            <svg class="animate-spin bg-black h-5 w-5 mr-3 ..." viewBox="0 0 24 24" />
+            <svg class="animate-spin bg-black h-5 w-5 mr-3 ..." viewBox="0 0 24 24"/>
           </div>
 
           <div class=" mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed border-input rounded-md">
@@ -76,14 +75,14 @@
                    aria-hidden="true">
                 <path
                   d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                  stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
               </svg>
 
               <div class="flex text-sm text-muted-foreground">
                 <label for="images"
                        class="relative cursor-pointer bg-background rounded-md font-medium text-primary hover:text-primary-foreground focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-primary">
                   <span>Cargar imágenes</span>
-                  <input id="images" name="images" type="file" multiple @change="handleImageUpload" class="sr-only" />
+                  <input id="images" name="images" type="file" multiple @change="handleImageUpload" class="sr-only"/>
                 </label>
                 <p class="pl-1">o arrastra y suelta los archivos acá.</p>
               </div>
@@ -91,14 +90,13 @@
             </div>
           </div>
 
-          <div v-if="form.images.length > 0" class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-            <div v-for="(image, index) in form.images" :key="index" class="relative">
-              <img :src="image" alt="Product preview" class="h-24 w-full object-cover rounded-md" />
+          <div v-if="form.images.base.length > 0" class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
+            <div v-for="(image, index) in form.images.base" :key="index" class="relative">
+              <img :src="image" alt="Product preview" class="h-24 w-full object-cover rounded-md"/>
               <button @click="removeImage(index)"
                       class="absolute top-0 right-0 bg-black text-foreground rounded-full p-1 m-1 hover:bg-accent focus:outline-none focus:ring-2 focus:ring-primary">
-                <Icon icon="mdi:close" color="white" width="24" />
+                <Icon icon="mdi:close" color="white" width="24"/>
               </button>
-
             </div>
           </div>
 
@@ -108,7 +106,7 @@
 
       <div v-if="form.tags.length > 0">
         <label for="tags" class="block tags text-sm font-medium text-foreground mb-1">Etiquetas</label>
-        <TagButton v-model="form.tags"/>
+        <TagButton v-model="form.tags" edit/>
 
       </div>
 
@@ -128,34 +126,11 @@
 <script setup lang="ts">
 import TagButton from '@/components/TagButton.vue'
 
-import { type Ref, ref } from 'vue'
-import { Icon } from '@iconify/vue'
+import {ref} from 'vue'
+import {Icon} from '@iconify/vue'
 import axios from 'axios'
-
-interface TagInterface {
-  name: string
-  conf: number
-}
-
-interface FormInterface {
-  productName: string
-  description: string
-  price: string
-  category: string
-  images: string[]
-  imagesData: File[]
-  tags: TagInterface[]
-}
-
-const form: Ref<FormInterface> = ref({
-  productName: '',
-  description: '',
-  price: '',
-  category: '',
-  images: [],
-  imagesData: [],
-  tags: []
-})
+import {useProduct} from "@/composables/product.composable";
+const { form, post } = useProduct()
 
 const imageLoading = ref(false)
 
@@ -174,21 +149,21 @@ const handleImageUpload = async (event: Event) => {
     const reader = new FileReader()
     reader.onload = async (e: ProgressEvent<FileReader>) => {
       if (e.target && e.target.result) {
-        form.value.images.push(e.target.result as string)
+        form.value.images.base.push(e.target.result as string)
       }
     }
     reader.readAsDataURL(file)
 
-    form.value.imagesData.push(...files)
-    form.value.imagesData = removeDuplicateFiles(form.value.imagesData)
+    form.value.images.files.push(...files)
+    form.value.images.files = removeDuplicateFiles(form.value.images.files)
     await sendImages()
   }
 }
 
 const removeImage = async (index: number) => {
-  form.value.images.splice(index, 1)
-  form.value.imagesData.splice(index, 1)
-  if (form.value.images.length > 0 && form.value.imagesData.length) {
+  form.value.images.base.splice(index, 1)
+  form.value.images.files.splice(index, 1)
+  if (form.value.images.base.length > 0 && form.value.images.files.length) {
     await sendImages()
     return
   }
@@ -196,27 +171,17 @@ const removeImage = async (index: number) => {
 }
 
 const handleSubmit = () => {
-  form.value = {
-    productName: '',
-    description: '',
-    price: '',
-    category: '',
-    images: [],
-    imagesData: [],
-    tags: []
-
-  }
-  alert('Producto agregado exitosamente')
+  post();
 }
 
 const sendImages = async () => {
   const formData = new FormData()
 
-  for (const image of form.value.imagesData) {
-    await formData.append('file', image)
+  for (const image of form.value.images.files) {
+    formData.append('file', image)
   }
 
-  console.log(form.value.imagesData)
+  console.log(form.value.images.files)
   console.log(form.value.images)
 
   imageLoading.value = true
@@ -245,4 +210,7 @@ const removeDuplicateFiles = (files: File[]): File[] => {
   );
 }
 
+
+
+const categories: string[] = ['Hogar', 'Electrónica', 'Ropa', 'Libros']
 </script>

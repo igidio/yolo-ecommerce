@@ -1,5 +1,5 @@
 <template>
-  <header class="bg-background border-b border-border">
+  <header class="bg-white border-b border-border sticky top-0 z-10">
     <div class="container mx-auto px-4">
       <div class="flex items-center justify-between h-16">
 
@@ -25,7 +25,7 @@
           <div class="relative">
             <input
               type="search"
-              placeholder="Search products..."
+              placeholder="Buscar"
               class="w-full py-2 pl-10 pr-4 text-sm text-foreground bg-background border border-input rounded-md focus:outline-none focus:ring-2 focus:ring-primary"
             />
             <div class="absolute inset-y-0 left-0 flex items-center pl-3">
