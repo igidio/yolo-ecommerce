@@ -53,7 +53,8 @@
           <option
             v-for="(category, index) in categories" :key="index"
             :value="category"
-          >{{ category }}</option>
+          >{{ category }}
+          </option>
         </select>
       </div>
 
@@ -126,11 +127,15 @@
 <script setup lang="ts">
 import TagButton from '@/components/TagButton.vue'
 
-import {ref} from 'vue'
+import {onBeforeMount, ref} from 'vue'
 import {Icon} from '@iconify/vue'
 import axios from 'axios'
 import {useProduct} from "@/composables/product.composable";
-const { form, post } = useProduct()
+import {useRouter} from "vue-router";
+
+const {form, post, clear} = useProduct()
+
+const router = useRouter()
 
 const imageLoading = ref(false)
 
@@ -172,6 +177,7 @@ const removeImage = async (index: number) => {
 
 const handleSubmit = () => {
   post();
+  router.push({name: 'detail', params: {id: '1'}})
 }
 
 const sendImages = async () => {
@@ -210,7 +216,9 @@ const removeDuplicateFiles = (files: File[]): File[] => {
   );
 }
 
-
+onBeforeMount(() => {
+  clear()
+})
 
 const categories: string[] = ['Hogar', 'Electrónica', 'Ropa', 'Libros']
 </script>

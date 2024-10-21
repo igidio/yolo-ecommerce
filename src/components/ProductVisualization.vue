@@ -16,7 +16,7 @@
             />
           </div>
           <button
-            v-if="form.images.base.length > 0"
+            v-if="hasManyFiles"
             @click="prevImage"
             class="absolute left-2 top-1/2 transform -translate-y-1/2 bg-white text-black p-2 rounded-full hover:bg-gray-100"
             aria-label="Previous image"
@@ -24,7 +24,7 @@
             <Icon icon="mdi:chevron-left"/>
           </button>
           <button
-            v-if="form.images.base.length > 0"
+            v-if="hasManyFiles"
             @click="nextImage"
             class="absolute right-2 top-1/2 transform -translate-y-1/2 bg-white text-black p-2 rounded-full hover:bg-gray-100"
             aria-label="Next image"
@@ -78,7 +78,7 @@
 </template>
 
 <script setup lang="ts">
-import {ref} from "vue";
+import {computed, ref} from "vue";
 import {Icon} from "@iconify/vue";
 import TagButton from "@/components/TagButton.vue";
 import SubmitMessage from "@/components/SubmitMessage.vue";
@@ -94,5 +94,7 @@ const nextImage = () => {
 const prevImage = () => {
   currentImageIndex.value = (currentImageIndex.value - 1 + form.value.images.base.length) % form.value.images.base.length
 }
+
+const hasManyFiles = computed(() => form.value.images.base.length > 1)
 
 </script>
